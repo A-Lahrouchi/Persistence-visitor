@@ -41,6 +41,7 @@ public class Circle implements SimpleShape, Visitable {
     /**
      * Implements the <tt>SimpleShape.draw()</tt> method for painting
      * the shape.
+     * 
      * @param g2 The graphics object used for painting.
      */
     public void draw(Graphics2D g2) {
@@ -56,7 +57,7 @@ public class Circle implements SimpleShape, Visitable {
 
     @Override
     public void accept(Visitor visitor) {
-    // TODO
+        // TODO
         visitor.visit(this);
     }
 

@@ -1,20 +1,12 @@
 package edu.uga.miage.m1.polygons.gui.persistence;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Attr;
-import org.w3c.dom.Element;
-import org.w3c.dom.Document;
-
 import edu.uga.miage.m1.polygons.gui.shapes.Circle;
-import edu.uga.miage.m1.polygons.gui.shapes.SimpleShape;
 import edu.uga.miage.m1.polygons.gui.shapes.Square;
 import edu.uga.miage.m1.polygons.gui.shapes.Triangle;
 
 /**
- * @author <a href="mailto:christophe.saint-marcel@univ-grenoble-alpes.fr">Christophe</a>
+ * @author <a href=
+ *         "mailto:christophe.saint-marcel@univ-grenoble-alpes.fr">Christophe</a>
  */
 public class XMLVisitor implements Visitor {
 
@@ -25,34 +17,21 @@ public class XMLVisitor implements Visitor {
 
     @Override
     public void visit(Circle circle) {
-    // TODO Request callback for the circle
-        
+        // TODO Request callback for the circle
+        representation = String.format("<shape><type>circle</type><x>%d</x><y>%d</y></shape>", circle.getX(), circle.getY());
     }
 
     @Override
     public void visit(Square square) {
-    // TODO Request callback for the square
+        // TODO Request callback for the square
+        representation = String.format("<shape><type>square</type><x>%d</x><y>%d</y></shape>", square.getX(), square.getY());
     }
 
     @Override
     public void visit(Triangle triangle) {
-    // TODO Request callback for the triangle
+        // TODO Request callback for the triangle
+        representation = String.format("<shape><type>triangle</type><x>%d</x><y>%d</y></shape>", triangle.getX(), triangle.getY());
     }
-
- /*    public Document createXmlDocument(){
-        Document representationDocument;
-        try {
-            DocumentBuilderFactory documentBuilderFactory= DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            representationDocument=documentBuilder.newDocument();
-        } catch (ParserConfigurationException e) {
-            // TODO: handle exception
-            System.out.println(e.getStackTrace().toString
-        }
-
-        return representationDocument;
-
-    } */
 
     /**
      * @return the representation in JSon example for a Triangle:

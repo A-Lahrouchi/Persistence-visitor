@@ -31,7 +31,8 @@ import edu.uga.miage.m1.polygons.gui.persistence.Visitor;
  * This class implements the square <tt>SimpleShape</tt> extension.
  * It simply provides a <tt>draw()</tt> that paints a square.
  *
- * @author <a href="mailto:christophe.saint-marcel@univ-grenoble-alpes.fr">Christophe</a>
+ * @author <a href=
+ *         "mailto:christophe.saint-marcel@univ-grenoble-alpes.fr">Christophe</a>
  */
 public class Square implements SimpleShape, Visitable {
 
@@ -47,6 +48,7 @@ public class Square implements SimpleShape, Visitable {
     /**
      * Implements the <tt>SimpleShape.draw()</tt> method for painting
      * the shape.
+     * 
      * @param g2 The graphics object used for painting.
      */
     public void draw(Graphics2D g2) {
@@ -62,7 +64,7 @@ public class Square implements SimpleShape, Visitable {
 
     @Override
     public void accept(Visitor visitor) {
-    // TODO
+        // TODO
         visitor.visit(this);
     }
 
