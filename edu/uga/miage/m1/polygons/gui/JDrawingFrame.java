@@ -43,6 +43,7 @@ import javax.json.JsonBuilderFactory;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -70,20 +71,25 @@ public class JDrawingFrame extends JFrame
         implements MouseListener, MouseMotionListener {
     private enum Shapes {
         SQUARE, TRIANGLE, CIRCLE,
+    };
+
+    private enum ExportTypes{
         JSON, XML
     };
 
     private static final long serialVersionUID = 1L;
     private JToolBar m_toolbar;
     private Shapes m_selected;
+    private ExportTypes m_exportType_selected;
     private JPanel m_panel;
     private JLabel m_label;
     private ActionListener m_reusableActionListener = new ShapeActionListener();
-
+    private ActionListener m_exportActionListener=new ExportActionListener();
     /**
      * Tracks buttons to manage the background.
      */
     private Map<Shapes, JButton> m_buttons = new HashMap<>();
+    private Map<ExportTypes, JButton> m_buttons_export= new HashMap<>();
 
     private FileWriter jsonFileWriter;
     private FileWriter xmlFileWriter;
@@ -122,8 +128,8 @@ public class JDrawingFrame extends JFrame
         addShape(Shapes.CIRCLE, new ImageIcon(getClass().getResource("images/circle.png")));
 
         // Add export buttons in menu
-        addShape(Shapes.JSON, "JSON");
-        addShape(Shapes.XML, "XML");
+        addShape(ExportTypes.JSON, "JSON");
+        addShape(ExportTypes.XML, "XML");
 
         setPreferredSize(new Dimension(400, 400));
     }
@@ -153,14 +159,15 @@ public class JDrawingFrame extends JFrame
     /*
      * Add export buttons
      */
-    private void addShape(Shapes shape, String exportType) {
+    private void addShape(ExportTypes export, String exportType) {
         JButton button = new JButton(exportType);
         button.setBorderPainted(false);
-        m_buttons.put(shape, button);
-        button.setActionCommand(shape.toString());
-        button.addActionListener(m_reusableActionListener);
+        m_buttons_export.put(export, button);
+        button.setActionCommand(export.toString());
+        button.addActionListener(m_exportActionListener);
+        /* button.addActionListener(m_reusableActionListener); */
 
-        if (m_selected == null) {
+        if (m_exportType_selected == null) {
             button.doClick();
         }
 
@@ -182,7 +189,7 @@ public class JDrawingFrame extends JFrame
     JsonObjectBuilder jsonObjectBuilder = factory.createObjectBuilder();
 
     StringBuilder xmlStringBuilder = new StringBuilder()
-        .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><shapes>");
+            .append("<?xml version=\"1.0\" encoding=\"UTF-8\"?><shapes>");
 
     public void mouseClicked(MouseEvent evt) {
 
@@ -225,27 +232,6 @@ public class JDrawingFrame extends JFrame
                     jsonArrayBuilder.add(jsonVisitor.getRepresentation());
                     xmlStringBuilder.append(xmlVisitor.getRepresentation());
                     break;
-
-                case JSON:
-                    jsonObjectBuilder.add("shapes", jsonArrayBuilder);
-                    try {
-                        jsonFileWriter.write(jsonObjectBuilder.build().toString());
-                        jsonFileWriter.flush();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-
-                case XML:
-                    xmlStringBuilder.append("</shapes>");
-                    try {
-                        xmlFileWriter.write(xmlStringBuilder.toString());
-                        xmlFileWriter.flush();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    break;
-
                 default:
                     System.out.println("No shape named " + m_selected);
             }
@@ -332,6 +318,51 @@ public class JDrawingFrame extends JFrame
                 }
                 btn.repaint();
             }
+        }
+    }
+
+    private class ExportActionListener implements ActionListener{
+        public void actionPerformed(ActionEvent evt) {
+            // Itère sur tous les boutons
+            Iterator<ExportTypes> keys = m_buttons_export.keySet().iterator();
+            while (keys.hasNext()) {
+                ExportTypes exportType = keys.next();
+                JButton btn = m_buttons_export.get(exportType);
+                if (evt.getActionCommand().equals(exportType.toString())) {
+                    btn.setBorderPainted(true);
+                    m_exportType_selected = exportType;
+                } else {
+                    btn.setBorderPainted(false);
+                }
+                btn.repaint();
+            }
+
+            switch (m_exportType_selected) {
+                case JSON:
+                    jsonObjectBuilder.add("shapes", jsonArrayBuilder);
+                    try {
+                        jsonFileWriter.write(jsonObjectBuilder.build().toString());
+                        jsonFileWriter.flush();
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                    break;
+
+                case XML:
+                    xmlStringBuilder.append("</shapes>");
+                    try {
+                        xmlFileWriter.write(xmlStringBuilder.toString());
+                        xmlFileWriter.flush();
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                    }
+                    break;
+
+                default:
+                    System.out.println("No Export type selected" + m_exportType_selected);
+            }
+            
+
         }
     }
 }
