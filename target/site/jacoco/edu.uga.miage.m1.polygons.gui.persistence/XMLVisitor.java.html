@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XMLVisitor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Persistence_g1_10</a> &gt; <a href="index.source.html" class="el_package">edu.uga.miage.m1.polygons.gui.persistence</a> &gt; <span class="el_source">XMLVisitor.java</span></div><h1>XMLVisitor.java</h1><pre class="source lang-java linenums">package edu.uga.miage.m1.polygons.gui.persistence;
+
+import edu.uga.miage.m1.polygons.gui.shapes.Circle;
+import edu.uga.miage.m1.polygons.gui.shapes.Square;
+import edu.uga.miage.m1.polygons.gui.shapes.Triangle;
+
+/**
+ * @author &lt;a href=
+ *         &quot;mailto:christophe.saint-marcel@univ-grenoble-alpes.fr&quot;&gt;Christophe&lt;/a&gt;
+ */
+<span class="fc" id="L11">public class XMLVisitor implements Visitor {</span>
+
+    @Override
+    public String visit(Circle circle) {
+<span class="fc" id="L15">        return getXmlShape(&quot;circle&quot;, circle.getX(), circle.getY());</span>
+    }
+
+    @Override
+    public String visit(Square square) {
+<span class="fc" id="L20">        return getXmlShape(&quot;square&quot;, square.getX(), square.getY());</span>
+    }
+
+    @Override
+    public String visit(Triangle triangle) {
+<span class="fc" id="L25">        return getXmlShape(&quot;triangle&quot;, triangle.getX(), triangle.getY());</span>
+    }
+
+    /**
+     * @return the representation in JSon example for a Triangle:
+     *         {@code
+     *  &lt;shape&gt;
+     *    &lt;type&gt;triangle&lt;/type&gt;
+     *    &lt;x&gt;-25&lt;/x&gt;
+     *    &lt;y&gt;-25&lt;/y&gt;
+     *  &lt;/shape&gt;
+     * }
+     */
+    public String getXmlShape(String shapeType, int x, int y) {
+<span class="fc" id="L39">        return String.format(&quot;&lt;shape&gt;&lt;type&gt;%s&lt;/type&gt;&lt;x&gt;%d&lt;/x&gt;&lt;y&gt;%d&lt;/y&gt;&lt;/shape&gt;&quot;, shapeType, x, y);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

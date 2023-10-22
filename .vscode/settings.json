@@ -1,0 +1,6 @@
+{
+    "sonarlint.connectedMode.project": {
+        "connectionId": "http-im2ag-sonar-u-ga-fr-9000-",
+        "projectKey": "fr.uga.miage.m1:Persistence_g1_10"
+    }
+}

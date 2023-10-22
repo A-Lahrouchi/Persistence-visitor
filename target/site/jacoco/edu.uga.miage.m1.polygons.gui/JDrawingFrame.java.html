@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JDrawingFrame.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Persistence_g1_10</a> &gt; <a href="index.source.html" class="el_package">edu.uga.miage.m1.polygons.gui</a> &gt; <span class="el_source">JDrawingFrame.java</span></div><h1>JDrawingFrame.java</h1><pre class="source lang-java linenums">package edu.uga.miage.m1.polygons.gui;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
+
+import edu.uga.miage.m1.polygons.gui.shapes.Circle;
+import edu.uga.miage.m1.polygons.gui.shapes.Square;
+import edu.uga.miage.m1.polygons.gui.shapes.Triangle;
+
+/**
+ * This class represents the main application class, which is a JFrame subclass
+ * that manages a toolbar of shapes and a drawing canvas.
+ *
+ * @author &lt;a href=&quot;mailto:christophe.saint-marcel@univ-grenoble-alpes.fr&quot;&gt;Christophe&lt;/a&gt;
+ */
+public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionListener {
+
+<span class="nc" id="L36">    private enum Shapes {</span>
+<span class="nc" id="L37">        SQUARE, TRIANGLE, CIRCLE</span>
+    }
+
+<span class="nc" id="L40">    private enum Exports {</span>
+<span class="nc" id="L41">        JSON, XML</span>
+    }
+
+    private static final long serialVersionUID = 1L;
+
+    private JToolBar toolbar;
+
+    private Shapes selectedShape;
+
+    private Exports selectedExport;
+
+    private JPanel panel;
+
+    private JLabel label;
+
+<span class="nc" id="L56">    private ActionListener reusableActionListener = new ShapeActionListener();</span>
+
+<span class="nc" id="L58">    private ActionListener exportActionListener = new ExportActionListener();</span>
+
+    /**
+     * Tracks buttons to manage the background.
+     */
+<span class="nc" id="L63">    private Map&lt;Shapes, JButton&gt; shapeButtons = new HashMap&lt;&gt;();</span>
+
+    /**
+     * Tracks buttons to manage the exports.
+     */
+<span class="nc" id="L68">    private Map&lt;Exports, JButton&gt; exportButtons = new HashMap&lt;&gt;();</span>
+
+    /**
+     * Default constructor that populates the main window.
+     * @param frameName
+     */
+    public JDrawingFrame(String frameName) {
+<span class="nc" id="L75">        super(frameName);</span>
+
+        // Instantiates components
+<span class="nc" id="L78">        toolbar = new JToolBar(&quot;Toolbar&quot;);</span>
+<span class="nc" id="L79">        panel = new JPanel();</span>
+<span class="nc" id="L80">        panel.setBackground(Color.WHITE);</span>
+<span class="nc" id="L81">        panel.setLayout(null);</span>
+<span class="nc" id="L82">        panel.setMinimumSize(new Dimension(400, 400));</span>
+<span class="nc" id="L83">        panel.addMouseListener(this);</span>
+<span class="nc" id="L84">        panel.addMouseMotionListener(this);</span>
+<span class="nc" id="L85">        label = new JLabel(&quot; &quot;, JLabel.LEFT);</span>
+
+        // Fills the panel
+<span class="nc" id="L88">        setLayout(new BorderLayout());</span>
+<span class="nc" id="L89">        add(toolbar, BorderLayout.NORTH);</span>
+<span class="nc" id="L90">        add(panel, BorderLayout.CENTER);</span>
+<span class="nc" id="L91">        add(label, BorderLayout.SOUTH);</span>
+
+        // Add shapes on the left side of the menu
+<span class="nc" id="L94">        addShape(Shapes.SQUARE, new ImageIcon(getClass().getResource(&quot;images/square.png&quot;)));</span>
+<span class="nc" id="L95">        addShape(Shapes.TRIANGLE, new ImageIcon(getClass().getResource(&quot;images/triangle.png&quot;)));</span>
+<span class="nc" id="L96">        addShape(Shapes.CIRCLE, new ImageIcon(getClass().getResource(&quot;images/circle.png&quot;)));</span>
+
+        // Add export buttons on the right side of the menu
+<span class="nc" id="L99">        toolbar.add(Box.createHorizontalGlue());</span>
+<span class="nc" id="L100">        addExport(Exports.JSON, &quot;JSON&quot;);</span>
+<span class="nc" id="L101">        addExport(Exports.XML, &quot;XML&quot;);</span>
+
+<span class="nc" id="L103">        setPreferredSize(new Dimension(400, 400));</span>
+<span class="nc" id="L104">    }</span>
+
+    /**
+     * Injects an available &lt;tt&gt;SimpleShape&lt;/tt&gt; into the drawing frame.
+     * @param name The name of the injected &lt;tt&gt;SimpleShape&lt;/tt&gt;.
+     * @param icon The icon associated with the injected &lt;tt&gt;SimpleShape&lt;/tt&gt;.
+     */
+    private void addShape(Shapes shape, ImageIcon icon) {
+<span class="nc" id="L112">        JButton button = new JButton(icon);</span>
+<span class="nc" id="L113">        button.setBorderPainted(false);</span>
+<span class="nc" id="L114">        shapeButtons.put(shape, button);</span>
+<span class="nc" id="L115">        button.setActionCommand(shape.toString());</span>
+<span class="nc" id="L116">        button.addActionListener(reusableActionListener);</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (selectedShape == null) {</span>
+<span class="nc" id="L118">            button.doClick();</span>
+        }
+<span class="nc" id="L120">        toolbar.add(button);</span>
+<span class="nc" id="L121">        toolbar.validate();</span>
+<span class="nc" id="L122">        repaint();</span>
+<span class="nc" id="L123">    }</span>
+
+    /**
+     * Add export buttons to the toolbar
+     * @param export The type of export (JSON ou XML)
+     * @param buttonLabel The label associated to the button
+     */
+    private void addExport(Exports export, String buttonLabel) {
+<span class="nc" id="L131">        JButton button = new JButton(buttonLabel);</span>
+<span class="nc" id="L132">        button.setBorderPainted(false);</span>
+<span class="nc" id="L133">        exportButtons.put(export, button);</span>
+<span class="nc" id="L134">        button.setActionCommand(export.toString());</span>
+<span class="nc" id="L135">        button.addActionListener(exportActionListener);</span>
+
+<span class="nc bnc" id="L137" title="All 2 branches missed.">        if (selectedExport == null) {</span>
+<span class="nc" id="L138">            button.doClick();</span>
+        }
+<span class="nc" id="L140">        toolbar.add(button);</span>
+<span class="nc" id="L141">        toolbar.validate();</span>
+<span class="nc" id="L142">        repaint();</span>
+<span class="nc" id="L143">    }</span>
+
+    /**
+     * Implements method for the &lt;tt&gt;MouseListener&lt;/tt&gt; interface to
+     * draw the selected shape into the drawing canvas.
+     * @param evt The associated mouse event.
+     */
+    public void mouseClicked(MouseEvent evt) {
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if (panel.contains(evt.getX(), evt.getY())) {</span>
+<span class="nc" id="L152">            Graphics2D g2 = (Graphics2D) panel.getGraphics();</span>
+<span class="nc bnc" id="L153" title="All 4 branches missed.">            switch(selectedShape) {</span>
+                case CIRCLE:
+<span class="nc" id="L155">                    new Circle(evt.getX(), evt.getY()).draw(g2);</span>
+<span class="nc" id="L156">                    break;</span>
+                case TRIANGLE:
+<span class="nc" id="L158">                    new Triangle(evt.getX(), evt.getY()).draw(g2);</span>
+<span class="nc" id="L159">                    break;</span>
+                case SQUARE:
+<span class="nc" id="L161">                    new Square(evt.getX(), evt.getY()).draw(g2);</span>
+<span class="nc" id="L162">                    break;</span>
+                default:
+<span class="nc" id="L164">                    System.out.println(&quot;No shape named &quot; + selectedShape);</span>
+            }
+        }
+<span class="nc" id="L167">    }</span>
+
+    /**
+     * Implements an empty method for the &lt;tt&gt;MouseListener&lt;/tt&gt; interface.
+     * @param evt The associated mouse event.
+     */
+    public void mouseEntered(MouseEvent evt) {
+<span class="nc" id="L174">    }</span>
+
+    /**
+     * Implements an empty method for the &lt;tt&gt;MouseListener&lt;/tt&gt; interface.
+     * @param evt The associated mouse event.
+     */
+    public void mouseExited(MouseEvent evt) {
+<span class="nc" id="L181">        label.setText(&quot; &quot;);</span>
+<span class="nc" id="L182">        label.repaint();</span>
+<span class="nc" id="L183">    }</span>
+
+    /**
+     * Implements method for the &lt;tt&gt;MouseListener&lt;/tt&gt; interface to initiate
+     * shape dragging.
+     * @param evt The associated mouse event.
+     */
+    public void mousePressed(MouseEvent evt) {
+<span class="nc" id="L191">    }</span>
+
+    /**
+     * Implements method for the &lt;tt&gt;MouseListener&lt;/tt&gt; interface to complete
+     * shape dragging.
+     * @param evt The associated mouse event.
+     */
+    public void mouseReleased(MouseEvent evt) {
+<span class="nc" id="L199">    }</span>
+
+    /**
+     * Implements method for the &lt;tt&gt;MouseMotionListener&lt;/tt&gt; interface to
+     * move a dragged shape.
+     * @param evt The associated mouse event.
+     */
+    public void mouseDragged(MouseEvent evt) {
+<span class="nc" id="L207">    }</span>
+
+    /**
+     * Implements an empty method for the &lt;tt&gt;MouseMotionListener&lt;/tt&gt;
+     * interface.
+     * @param evt The associated mouse event.
+     */
+    public void mouseMoved(MouseEvent evt) {
+<span class="nc" id="L215">        modifyLabel(evt);</span>
+<span class="nc" id="L216">    }</span>
+
+    private void modifyLabel(MouseEvent evt) {
+<span class="nc" id="L219">        label.setText(&quot;(&quot; + evt.getX() + &quot;,&quot; + evt.getY() + &quot;)&quot;);</span>
+<span class="nc" id="L220">    }</span>
+
+    /**
+     * Simple action listener for shape tool bar buttons that sets
+     * the drawing frame's currently selected shape when receiving
+     * an action event.
+     */
+<span class="nc" id="L227">    private class ShapeActionListener implements ActionListener {</span>
+
+        public void actionPerformed(ActionEvent evt) {
+            // Itere sur tous les boutons
+<span class="nc" id="L231">            Iterator&lt;Shapes&gt; keys = shapeButtons.keySet().iterator();</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">            while (keys.hasNext()) {</span>
+<span class="nc" id="L233">                Shapes shape = keys.next();</span>
+<span class="nc" id="L234">                JButton btn = shapeButtons.get(shape);</span>
+<span class="nc bnc" id="L235" title="All 2 branches missed.">                if (evt.getActionCommand().equals(shape.toString())) {</span>
+<span class="nc" id="L236">                    btn.setBorderPainted(true);</span>
+<span class="nc" id="L237">                    selectedShape = shape;</span>
+                } else {
+<span class="nc" id="L239">                    btn.setBorderPainted(false);</span>
+                }
+<span class="nc" id="L241">                btn.repaint();</span>
+<span class="nc" id="L242">            }</span>
+<span class="nc" id="L243">        }</span>
+    }
+
+    /**
+     * Simple action listener for export tool bar buttons that export
+     * the shape list to JSON and XML file when receiving an action event.
+     */
+<span class="nc" id="L250">    private class ExportActionListener implements ActionListener{</span>
+        public void actionPerformed(ActionEvent evt) {
+            // Itere sur tous les boutons
+<span class="nc" id="L253">            Iterator&lt;Exports&gt; keys = exportButtons.keySet().iterator();</span>
+<span class="nc bnc" id="L254" title="All 2 branches missed.">            while (keys.hasNext()) {</span>
+<span class="nc" id="L255">                Exports exportType = keys.next();</span>
+<span class="nc" id="L256">                JButton btn = exportButtons.get(exportType);</span>
+<span class="nc bnc" id="L257" title="All 4 branches missed.">                if (evt.getActionCommand().equals(exportType.toString())</span>
+                    &amp;&amp; exportType == Exports.JSON) {
+                    //selectedExport = exportType;
+<span class="nc" id="L260">                    System.out.println(&quot;Exported to: &quot; + exportType.toString());</span>
+                } 
+<span class="nc bnc" id="L262" title="All 4 branches missed.">                if (evt.getActionCommand().equals(exportType.toString())</span>
+                    &amp;&amp; exportType == Exports.XML) {
+                    //selectedExport = exportType;
+<span class="nc" id="L265">                    System.out.println(&quot;Exported to: &quot; + exportType.toString());</span>
+                } 
+<span class="nc" id="L267">                btn.repaint();</span>
+<span class="nc" id="L268">            }</span>
+/*
+            switch (selectedExport) {
+                case JSON:
+                    System.out.println(&quot;Exported to: &quot; + selectedExport.toString());
+                    break;
+
+                case XML:
+                    System.out.println(&quot;Exported to: &quot; + selectedExport.toString());
+                    break;
+
+                default:
+                    System.out.println(&quot;No Export type selected&quot; + selectedExport);
+            }
+*/
+<span class="nc" id="L283">        }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
