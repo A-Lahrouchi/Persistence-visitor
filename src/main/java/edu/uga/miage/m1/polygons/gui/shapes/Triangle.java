@@ -18,6 +18,8 @@
  */
 package edu.uga.miage.m1.polygons.gui.shapes;
 
+import static java.awt.geom.Path2D.WIND_EVEN_ODD;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.GradientPaint;
@@ -53,12 +55,12 @@ public class Triangle implements SimpleShape, Visitable {
      */
     public void draw(Graphics2D g2) {
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        GradientPaint gradient = new GradientPaint(x, y, Color.GREEN, x + 50, y, Color.WHITE);
+        GradientPaint gradient = new GradientPaint(x, y, Color.GREEN, x + 50f, y, Color.WHITE);
         g2.setPaint(gradient);
         int[] xcoords = { x + 25, x, x + 50 };
         int[] ycoords = { y, y + 50, y + 50 };
-        GeneralPath polygon = new GeneralPath(GeneralPath.WIND_EVEN_ODD, xcoords.length);
-        polygon.moveTo(x + 25, y);
+        GeneralPath polygon = new GeneralPath(WIND_EVEN_ODD, xcoords.length);
+        polygon.moveTo(x + 25f, y);
         for (int i = 0; i < xcoords.length; i++) {
             polygon.lineTo(xcoords[i], ycoords[i]);
         }

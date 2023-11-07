@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: ShapesTest
+Test set: ExporterTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 0.005 s - in ShapesTest
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.538 s - in ExporterTest

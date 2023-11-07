@@ -20,7 +20,7 @@ public class XmlShapes {
     public XmlShapes() {
         this.shapeList = new ArrayList<>();
     }
-
+    
     public List<JsonNode> getShapeList() {
         return shapeList;
     }

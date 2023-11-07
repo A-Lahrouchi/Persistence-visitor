@@ -12,7 +12,7 @@ class TriangleTest {
     void acceptShouldReturnAJsonTriangle() {
         String jsonTriangle = "";
         Triangle triangle = new Triangle(125, 50);
-        Visitor visitor = new JSonVisitor();
+        Visitor visitor = JSonVisitor.getInstance();
 
         jsonTriangle = triangle.accept(visitor);
 
@@ -23,7 +23,7 @@ class TriangleTest {
     void acceptShouldReturnAnXMLTriangle() {
         String xmlTriangle = "";
         Triangle triangle = new Triangle(25, 25);
-        Visitor visitor = new XMLVisitor();
+        Visitor visitor = XMLVisitor.getInstance();
 
         xmlTriangle = triangle.accept(visitor);
 

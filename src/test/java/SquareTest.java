@@ -12,7 +12,7 @@ class SquareTest {
     void acceptShouldReturnAJsonSquare() {
         String jsonSquare = "";
         Square square = new Square(125, 50);
-        Visitor visitor = new JSonVisitor();
+        Visitor visitor = JSonVisitor.getInstance();
 
         jsonSquare = square.accept(visitor);
 
@@ -23,7 +23,7 @@ class SquareTest {
     void acceptShouldReturnAnXMLSquare() {
         String xmlSquare = "";
         Square square = new Square(25, 25);
-        Visitor visitor = new XMLVisitor();
+        Visitor visitor = XMLVisitor.getInstance();
 
         xmlSquare = square.accept(visitor);
 

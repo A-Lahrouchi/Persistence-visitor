@@ -9,6 +9,18 @@ import edu.uga.miage.m1.polygons.gui.shapes.Triangle;
  *         "mailto:christophe.saint-marcel@univ-grenoble-alpes.fr">Christophe</a>
  */
 public class XMLVisitor implements Visitor {
+    private static XMLVisitor singletonXmlVisitor;
+
+    private XMLVisitor() {
+
+    }
+
+    public static XMLVisitor getInstance() {
+        if (singletonXmlVisitor == null) {
+            singletonXmlVisitor = new XMLVisitor();
+        }
+        return singletonXmlVisitor;
+    }
 
     @Override
     public String visit(Circle circle) {

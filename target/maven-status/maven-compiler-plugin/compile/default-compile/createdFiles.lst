@@ -1,8 +1,7 @@
 edu/uga/miage/m1/polygons/gui/shapes/SimpleShape.class
 edu/uga/miage/m1/polygons/gui/GUIHelper.class
-edu/uga/miage/m1/polygons/gui/shapes/Export.class
 edu/uga/miage/m1/polygons/gui/persistence/Visitor.class
-edu/uga/miage/m1/polygons/gui/shapes/JsonShapes.class
+edu/uga/miage/m1/polygons/gui/exporters/Exporter.class
 edu/uga/miage/m1/polygons/gui/JDrawingFrame$Exports.class
 edu/uga/miage/m1/polygons/gui/persistence/JSonVisitor.class
 edu/uga/miage/m1/polygons/gui/persistence/XMLVisitor.class
@@ -13,6 +12,8 @@ edu/uga/miage/m1/polygons/gui/persistence/Visitable.class
 edu/uga/miage/m1/polygons/gui/App.class
 edu/uga/miage/m1/polygons/gui/shapes/Triangle.class
 edu/uga/miage/m1/polygons/gui/shapes/Circle.class
+edu/uga/miage/m1/polygons/gui/exporters/XmlShapes.class
 edu/uga/miage/m1/polygons/gui/JDrawingFrame$Shapes.class
 edu/uga/miage/m1/polygons/gui/JDrawingFrame.class
+edu/uga/miage/m1/polygons/gui/exporters/JsonShapes.class
 edu/uga/miage/m1/polygons/gui/shapes/Square.class

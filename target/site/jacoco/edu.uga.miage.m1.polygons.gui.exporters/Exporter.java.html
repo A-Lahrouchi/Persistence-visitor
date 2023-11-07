@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Exporter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Persistence_g1_10</a> &gt; <a href="index.source.html" class="el_package">edu.uga.miage.m1.polygons.gui.exporters</a> &gt; <span class="el_source">Exporter.java</span></div><h1>Exporter.java</h1><pre class="source lang-java linenums">package edu.uga.miage.m1.polygons.gui.exporters;
+
+import java.io.File;
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
+
+public class Exporter {
+
+    private ObjectMapper objectMapper;
+    private XmlMapper xmlMapper;
+
+<span class="fc" id="L17">    public Exporter() {</span>
+<span class="fc" id="L18">        this.objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L19">        this.xmlMapper = new XmlMapper();</span>
+<span class="fc" id="L20">        xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true);</span>
+<span class="fc" id="L21">    }</span>
+
+    public String getJsonShapesAsString(JsonShapes jsonShapes) {
+<span class="fc" id="L24">        String jsonShapesAString = null;</span>
+        try {
+<span class="fc" id="L26">            jsonShapesAString = objectMapper.writeValueAsString(jsonShapes);</span>
+<span class="nc" id="L27">        } catch (IOException e) {</span>
+<span class="nc" id="L28">            e.printStackTrace();</span>
+<span class="fc" id="L29">        }</span>
+<span class="fc" id="L30">        return jsonShapesAString;</span>
+    }
+
+    public String writeJsonShapes(JsonShapes jsonShapes) {
+<span class="fc" id="L34">        String jsonShapesAString = null;</span>
+        JsonNode jsonShapesNode;
+        try {
+<span class="fc" id="L37">            objectMapper.writeValue(new File(&quot;./exports/export.json&quot;), jsonShapes);</span>
+<span class="fc" id="L38">            jsonShapesNode = objectMapper.readTree(new File(&quot;./exports/export.json&quot;));</span>
+<span class="fc" id="L39">            jsonShapesAString = objectMapper.writeValueAsString(jsonShapesNode);</span>
+<span class="nc" id="L40">        } catch (IOException e) {</span>
+<span class="nc" id="L41">            e.printStackTrace();</span>
+<span class="fc" id="L42">        }</span>
+<span class="fc" id="L43">        return jsonShapesAString;</span>
+    }
+
+    public String getXmlShapesAsString(XmlShapes xmlShapes) {
+<span class="fc" id="L47">        String xmlShapesAString = null;</span>
+        try {
+<span class="fc" id="L49">            xmlShapesAString = xmlMapper.writeValueAsString(xmlShapes);</span>
+<span class="nc" id="L50">        } catch (IOException e) {</span>
+<span class="nc" id="L51">            e.printStackTrace();</span>
+<span class="fc" id="L52">        }</span>
+<span class="fc" id="L53">        return xmlShapesAString;</span>
+    }
+
+    public String writeXmlShapes(XmlShapes xmlShapes) {
+<span class="fc" id="L57">        String xmlShapesAString = null;</span>
+        XmlShapes xmlShapesResult;
+        try {
+<span class="fc" id="L60">            xmlMapper.writeValue(new File(&quot;./exports/export.xml&quot;), xmlShapes);</span>
+<span class="fc" id="L61">            xmlShapesResult = xmlMapper.readValue(new File(&quot;./exports/export.xml&quot;), XmlShapes.class);</span>
+<span class="fc" id="L62">            xmlShapesAString = xmlMapper.writeValueAsString(xmlShapesResult);</span>
+<span class="nc" id="L63">        } catch (IOException e) {</span>
+<span class="nc" id="L64">            e.printStackTrace();</span>
+<span class="fc" id="L65">        }</span>
+<span class="fc" id="L66">        return xmlShapesAString;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -9,6 +9,18 @@ import edu.uga.miage.m1.polygons.gui.shapes.Triangle;
  *         "mailto:christophe.saint-marcel@univ-grenoble-alpes.fr">Christophe</a>
  */
 public class JSonVisitor implements Visitor {
+    private static JSonVisitor singletonJSonVisitor;
+
+    private JSonVisitor() {
+
+    }
+
+    public static JSonVisitor getInstance() {
+        if (singletonJSonVisitor == null) {
+            singletonJSonVisitor = new JSonVisitor();
+        }
+        return singletonJSonVisitor;
+    }
 
     @Override
     public String visit(Circle circle) {

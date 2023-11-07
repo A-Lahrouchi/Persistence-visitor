@@ -5,19 +5,27 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 
 public class Exporter {
 
+    private static Exporter singletonExporter;
+
     private ObjectMapper objectMapper;
     private XmlMapper xmlMapper;
 
-    public Exporter() {
+    private Exporter() {
         this.objectMapper = new ObjectMapper();
         this.xmlMapper = new XmlMapper();
         xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true);
+    }
+
+    public static Exporter getInstance() {
+        if (singletonExporter == null) {
+            singletonExporter = new Exporter();
+        }
+        return singletonExporter;
     }
 
     public String getJsonShapesAsString(JsonShapes jsonShapes) {

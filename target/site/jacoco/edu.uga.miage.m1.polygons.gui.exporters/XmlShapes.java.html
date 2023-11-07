@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlShapes.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Persistence_g1_10</a> &gt; <a href="index.source.html" class="el_package">edu.uga.miage.m1.polygons.gui.exporters</a> &gt; <span class="el_source">XmlShapes.java</span></div><h1>XmlShapes.java</h1><pre class="source lang-java linenums">package edu.uga.miage.m1.polygons.gui.exporters;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+@JacksonXmlRootElement(localName = &quot;root&quot;)
+public class XmlShapes {
+
+    @JacksonXmlElementWrapper(localName = &quot;shapes&quot;)
+    @JacksonXmlProperty(localName = &quot;shape&quot;)
+    private ArrayList&lt;JsonNode&gt; shapeList;
+
+<span class="fc" id="L20">    public XmlShapes() {</span>
+<span class="fc" id="L21">        this.shapeList = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L22">    }</span>
+
+    public List&lt;JsonNode&gt; getShapeList() {
+<span class="fc" id="L25">        return shapeList;</span>
+    }
+
+    public void pushToShapeList(String shape) {
+<span class="fc" id="L29">        XmlMapper xmlMapper = new XmlMapper();</span>
+        JsonNode shapeNode;
+        try {
+<span class="fc" id="L32">            shapeNode = xmlMapper.readTree(shape);</span>
+<span class="fc" id="L33">            shapeList.add(shapeNode);</span>
+<span class="nc" id="L34">        } catch (IOException e) {</span>
+<span class="nc" id="L35">            e.printStackTrace();</span>
+<span class="fc" id="L36">        }</span>
+<span class="fc" id="L37">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

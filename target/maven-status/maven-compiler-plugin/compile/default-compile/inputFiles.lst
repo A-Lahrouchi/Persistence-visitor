@@ -2,10 +2,11 @@
 /home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/GUIHelper.java
 /home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/persistence/Visitor.java
 /home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/shapes/SimpleShape.java
+/home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/exporters/Exporter.java
 /home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/persistence/Visitable.java
-/home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/shapes/Export.java
+/home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/exporters/XmlShapes.java
+/home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/exporters/JsonShapes.java
 /home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/shapes/Circle.java
-/home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/shapes/JsonShapes.java
 /home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/App.java
 /home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/persistence/JSonVisitor.java
 /home/tim/Documents/study/m1_miage_7/pc/persistence/src/main/java/edu/uga/miage/m1/polygons/gui/JDrawingFrame.java

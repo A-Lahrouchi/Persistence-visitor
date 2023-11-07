@@ -34,7 +34,8 @@ import edu.uga.miage.m1.polygons.gui.shapes.Triangle;
  * This class represents the main application class, which is a JFrame subclass
  * that manages a toolbar of shapes and a drawing canvas.
  *
- * @author <a href="mailto:christophe.saint-marcel@univ-grenoble-alpes.fr">Christophe</a>
+ * @author <a href=
+ *         "mailto:christophe.saint-marcel@univ-grenoble-alpes.fr">Christophe</a>
  */
 public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionListener {
 
@@ -72,7 +73,6 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
      */
     private Map<Exports, JButton> exportButtons = new HashMap<>();
 
-
     private Exporter exporter;
     private JSonVisitor jsonVisitor;
     private XMLVisitor xmlVisitor;
@@ -81,14 +81,15 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
     /**
      * Default constructor that populates the main window.
+     * 
      * @param frameName
      */
     public JDrawingFrame(String frameName) {
         super(frameName);
 
-        exporter = new Exporter();
-        jsonVisitor = new JSonVisitor();
-        xmlVisitor = new XMLVisitor();
+        exporter = Exporter.getInstance();
+        jsonVisitor = JSonVisitor.getInstance();
+        xmlVisitor = XMLVisitor.getInstance();
         jsonShapes = new JsonShapes();
         xmlShapes = new XmlShapes();
 
@@ -123,6 +124,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
     /**
      * Injects an available <tt>SimpleShape</tt> into the drawing frame.
+     * 
      * @param name The name of the injected <tt>SimpleShape</tt>.
      * @param icon The icon associated with the injected <tt>SimpleShape</tt>.
      */
@@ -142,7 +144,8 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
     /**
      * Add export buttons to the toolbar
-     * @param export The type of export (JSON ou XML)
+     * 
+     * @param export      The type of export (JSON ou XML)
      * @param buttonLabel The label associated to the button
      */
     private void addExport(Exports export, String buttonLabel) {
@@ -163,12 +166,13 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     /**
      * Implements method for the <tt>MouseListener</tt> interface to
      * draw the selected shape into the drawing canvas.
+     * 
      * @param evt The associated mouse event.
      */
     public void mouseClicked(MouseEvent evt) {
         if (panel.contains(evt.getX(), evt.getY())) {
             Graphics2D g2 = (Graphics2D) panel.getGraphics();
-            switch(selectedShape) {
+            switch (selectedShape) {
                 case CIRCLE:
                     Circle c = new Circle(evt.getX(), evt.getY());
                     c.draw(g2);
@@ -196,6 +200,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
     /**
      * Implements an empty method for the <tt>MouseListener</tt> interface.
+     * 
      * @param evt The associated mouse event.
      */
     public void mouseEntered(MouseEvent evt) {
@@ -203,6 +208,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
     /**
      * Implements an empty method for the <tt>MouseListener</tt> interface.
+     * 
      * @param evt The associated mouse event.
      */
     public void mouseExited(MouseEvent evt) {
@@ -213,6 +219,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     /**
      * Implements method for the <tt>MouseListener</tt> interface to initiate
      * shape dragging.
+     * 
      * @param evt The associated mouse event.
      */
     public void mousePressed(MouseEvent evt) {
@@ -221,6 +228,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     /**
      * Implements method for the <tt>MouseListener</tt> interface to complete
      * shape dragging.
+     * 
      * @param evt The associated mouse event.
      */
     public void mouseReleased(MouseEvent evt) {
@@ -229,6 +237,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     /**
      * Implements method for the <tt>MouseMotionListener</tt> interface to
      * move a dragged shape.
+     * 
      * @param evt The associated mouse event.
      */
     public void mouseDragged(MouseEvent evt) {
@@ -237,6 +246,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     /**
      * Implements an empty method for the <tt>MouseMotionListener</tt>
      * interface.
+     * 
      * @param evt The associated mouse event.
      */
     public void mouseMoved(MouseEvent evt) {
@@ -275,45 +285,32 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
      * Simple action listener for export tool bar buttons that export
      * the shape list to JSON and XML file when receiving an action event.
      */
-    private class ExportActionListener implements ActionListener{
+    private class ExportActionListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
             // Itere sur tous les boutons
             Iterator<Exports> keys = exportButtons.keySet().iterator();
             while (keys.hasNext()) {
                 Exports exportType = keys.next();
                 JButton btn = exportButtons.get(exportType);
-                if (evt.getActionCommand().equals(exportType.toString())
-                    && exportType == Exports.JSON) {
-                    //selectedExport = exportType;
-                    
-                    exporter.writeJsonShapes(jsonShapes);
+                if (evt.getActionCommand().equals(exportType.toString())){
+                    selectedExport = exportType;
+                    switch (selectedExport) {
+                        case JSON:
+                            exporter.writeJsonShapes(jsonShapes);
+                            System.out.println("Exported to: " + selectedExport.toString());
+                            break;
 
-                    System.out.println("Exported to: " + exportType.toString());
-                } 
-                if (evt.getActionCommand().equals(exportType.toString())
-                    && exportType == Exports.XML) {
-                    //selectedExport = exportType;
+                        case XML:
+                            exporter.writeXmlShapes(xmlShapes);
+                            System.out.println("Exported to: " + selectedExport.toString());
+                            break;
 
-                    exporter.writeXmlShapes(xmlShapes);
-
-                    System.out.println("Exported to: " + exportType.toString());
-                } 
+                        default:
+                            System.out.println("No Export type selected" + selectedExport);
+                    }
+                }
                 btn.repaint();
             }
-/*
-            switch (selectedExport) {
-                case JSON:
-                    System.out.println("Exported to: " + selectedExport.toString());
-                    break;
-
-                case XML:
-                    System.out.println("Exported to: " + selectedExport.toString());
-                    break;
-
-                default:
-                    System.out.println("No Export type selected" + selectedExport);
-            }
-*/
         }
     }
 }

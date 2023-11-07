@@ -1,4 +1,5 @@
+CommandTest.class
 CircleTest.class
-ShapesTest.class
+ExporterTest.class
 SquareTest.class
 TriangleTest.class

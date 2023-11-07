@@ -12,7 +12,7 @@ class CircleTest {
     void acceptShouldReturnAJsonCircle() {
         String jsonCircle = "";
         Circle circle = new Circle(125, 50);
-        Visitor visitor = new JSonVisitor();
+        Visitor visitor = JSonVisitor.getInstance();
 
         jsonCircle = circle.accept(visitor);
 
@@ -23,7 +23,7 @@ class CircleTest {
     void acceptShouldReturnAnXMLCircle() {
         String xmlCircle = "";
         Circle circle = new Circle(25, 25);
-        Visitor visitor = new XMLVisitor();
+        Visitor visitor = XMLVisitor.getInstance();
 
         xmlCircle = circle.accept(visitor);
 
