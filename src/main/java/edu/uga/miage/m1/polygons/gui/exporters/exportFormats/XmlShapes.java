@@ -1,4 +1,4 @@
-package edu.uga.miage.m1.polygons.gui.exporters;
+package edu.uga.miage.m1.polygons.gui.exporters.exportFormats;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 @JacksonXmlRootElement(localName = "root")
-public class XmlShapes {
+public class XmlShapes implements ListOfShapes {
 
     @JacksonXmlElementWrapper(localName = "shapes")
     @JacksonXmlProperty(localName = "shape")

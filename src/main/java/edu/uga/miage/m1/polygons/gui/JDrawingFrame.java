@@ -21,9 +21,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-import edu.uga.miage.m1.polygons.gui.exporters.Exporter;
-import edu.uga.miage.m1.polygons.gui.exporters.JsonShapes;
-import edu.uga.miage.m1.polygons.gui.exporters.XmlShapes;
+import edu.uga.miage.m1.polygons.gui.commands.CommandInvoker;
+import edu.uga.miage.m1.polygons.gui.commands.ExportToJsonCommand;
+import edu.uga.miage.m1.polygons.gui.commands.ExportToXmlCommand;
+import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.JsonShapes;
+import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.XmlShapes;
 import edu.uga.miage.m1.polygons.gui.persistence.JSonVisitor;
 import edu.uga.miage.m1.polygons.gui.persistence.XMLVisitor;
 import edu.uga.miage.m1.polygons.gui.shapes.Circle;
@@ -73,11 +75,11 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
      */
     private Map<Exports, JButton> exportButtons = new HashMap<>();
 
-    private Exporter exporter;
     private JSonVisitor jsonVisitor;
     private XMLVisitor xmlVisitor;
     private JsonShapes jsonShapes;
     private XmlShapes xmlShapes;
+    private CommandInvoker invoker;
 
     /**
      * Default constructor that populates the main window.
@@ -87,11 +89,11 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     public JDrawingFrame(String frameName) {
         super(frameName);
 
-        exporter = Exporter.getInstance();
         jsonVisitor = JSonVisitor.getInstance();
         xmlVisitor = XMLVisitor.getInstance();
         jsonShapes = new JsonShapes();
         xmlShapes = new XmlShapes();
+        invoker = CommandInvoker.getInstance();
 
         // Instantiates components
         toolbar = new JToolBar("Toolbar");
@@ -296,13 +298,13 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
                     selectedExport = exportType;
                     switch (selectedExport) {
                         case JSON:
-                            exporter.writeJsonShapes(jsonShapes);
-                            System.out.println("Exported to: " + selectedExport.toString());
+                            invoker.setCommand(new ExportToJsonCommand(jsonShapes));
+                            invoker.executeCommand();
                             break;
 
                         case XML:
-                            exporter.writeXmlShapes(xmlShapes);
-                            System.out.println("Exported to: " + selectedExport.toString());
+                            invoker.setCommand(new ExportToXmlCommand(xmlShapes));
+                            invoker.executeCommand();
                             break;
 
                         default:

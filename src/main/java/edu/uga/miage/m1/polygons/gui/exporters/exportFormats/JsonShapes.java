@@ -1,4 +1,4 @@
-package edu.uga.miage.m1.polygons.gui.exporters;
+package edu.uga.miage.m1.polygons.gui.exporters.exportFormats;
 
 import java.util.List;
 
@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class JsonShapes {
+public class JsonShapes implements ListOfShapes {
 
     @JsonProperty("shapes")
     private ArrayList<JsonNode> shapeList;
