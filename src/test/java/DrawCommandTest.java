@@ -59,4 +59,30 @@ class DrawCommandTest {
 
         assertEquals("{\"shapes\":[]}", jsonShapesAsString);
     }
+
+    @Test
+    void testRedoDrawing() {
+        CommandManager commandManager = CommandManager.getInstance();
+        Exporter exporter = JsonExporter.getInstance();
+        JsonShapes jsonShapes = new JsonShapes();
+        XmlShapes xmlShapes = new XmlShapes();
+        JsonShapes jsonShapesResult;
+        String jsonShapesAsString = null;
+
+        commandManager.executeCommand(new DrawShapesCommand(
+                null,
+                "circle",
+                25,
+                25,
+                jsonShapes,
+                xmlShapes));
+        commandManager.undoCommand();
+        commandManager.redoCommand();
+        commandManager.executeCommand(new ExportToJsonCommand(jsonShapes));
+        jsonShapesResult = (JsonShapes) exporter.readShapes();
+        jsonShapesAsString = exporter.getShapesAsString(jsonShapesResult);
+        
+
+        assertEquals("{\"shapes\":[{\"type\":\"circle\",\"x\":0,\"y\":0}]}", jsonShapesAsString);
+    }
 }

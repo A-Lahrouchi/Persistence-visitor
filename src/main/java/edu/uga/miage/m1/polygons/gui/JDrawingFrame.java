@@ -41,7 +41,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     }
 
     private enum Commands {
-        JSON, XML, UNDO
+        JSON, XML, UNDO, REDO
     }
 
     private static final long serialVersionUID = 1L;
@@ -112,6 +112,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
         addCommand(Commands.JSON, "JSON");
         addCommand(Commands.XML, "XML");
         addCommand(Commands.UNDO, "UNDO");
+        addCommand(Commands.REDO, "REDO");
 
         setPreferredSize(new Dimension(400, 400));
     }
@@ -306,6 +307,10 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
                         case UNDO:
                             commandManager.undoCommand();
+                            break;
+
+                        case REDO:
+                            commandManager.redoCommand();
                             break;
 
                         default:
