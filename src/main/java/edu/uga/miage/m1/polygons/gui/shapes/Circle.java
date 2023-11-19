@@ -36,9 +36,17 @@ public class Circle implements SimpleShape, Visitable {
 
     int y;
 
+    Circle previousCircle;
+
     public Circle(int x, int y) {
         this.x = x - 25;
         this.y = y - 25;
+    }
+
+    public Circle(int x, int y, Circle previousCircle){
+        this.x = x - 25;
+        this.y = y - 25;
+        this.previousCircle=previousCircle;
     }
 
     /**
@@ -104,12 +112,19 @@ public class Circle implements SimpleShape, Visitable {
         }
     }
 
+    public void undo(Graphics2D g2, ArrayList<SimpleShape> allShapes){
+        if(this.previousCircle != null){
+            this.previousCircle.draw(g2);
+            allShapes.add(previousCircle);
+        }
+        erase(g2, allShapes);
+    }
+
     public void move (Graphics2D g2,  ArrayList<SimpleShape> allShapes, int x, int y){
         erase(g2, allShapes);
-        this.setX(x);
-        this.setY(y);
-        draw(g2);
-        allShapes.add(this);
+        Circle newCircle = new Circle(x, y, this);
+        newCircle.draw(g2);
+        allShapes.add(newCircle);
     }
 
 
@@ -126,11 +141,4 @@ public class Circle implements SimpleShape, Visitable {
         return y;
     }
 
-    private void setX(int x){
-        this.x = x - 25;
-    }
-
-    private void setY(int y){
-        this.y = y - 25;
-    }
 }

@@ -43,9 +43,17 @@ public class Square implements SimpleShape, Visitable {
 
     int y;
 
+    Square previousSquare;
+
     public Square(int x, int y) {
         this.x = x - 25;
         this.y = y - 25;
+    }
+
+    public Square(int x, int y, Square previousSquare) {
+        this.x = x - 25;
+        this.y = y - 25;
+        this.previousSquare=previousSquare;
     }
 
     /**
@@ -101,6 +109,14 @@ public class Square implements SimpleShape, Visitable {
 
         return overlapingShapes;
     }
+    
+    public void undo(Graphics2D g2, ArrayList<SimpleShape> allShapes){
+        if(this.previousSquare != null){
+            this.previousSquare.draw(g2);
+            allShapes.add(previousSquare);
+        }
+        erase(g2, allShapes);
+    }
 
     public void erase(Graphics2D g2, ArrayList<SimpleShape> allShapes ){
 
@@ -118,10 +134,9 @@ public class Square implements SimpleShape, Visitable {
 
     public void move (Graphics2D g2,  ArrayList<SimpleShape> allShapes, int x, int y){
         erase(g2, allShapes);
-        this.setX(x);
-        this.setY(y);
-        draw(g2);
-        allShapes.add(this);
+        Square newSquare = new Square(x, y, this);
+        newSquare.draw(g2);
+        allShapes.add(newSquare);
     }
 
     @Override
@@ -139,11 +154,4 @@ public class Square implements SimpleShape, Visitable {
         return y;
     }
 
-    private void setX(int x){
-        this.x=x-25;
-    }
-
-    private void setY(int y){
-        this.y=y-25;
-    }
 }

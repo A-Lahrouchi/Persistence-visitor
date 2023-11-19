@@ -23,6 +23,8 @@ public interface SimpleShape {
 
     Area getArea();
 
+    void undo (Graphics2D g2, ArrayList<SimpleShape> allShapes);
+
     void erase (Graphics2D g2, ArrayList<SimpleShape> allShapes);
 
     void move (Graphics2D g2, ArrayList<SimpleShape> allShapes, int x, int y);

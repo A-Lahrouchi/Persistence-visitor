@@ -21,7 +21,7 @@ public class UndoCommand implements Command {
     }
 
     public void execute(){
-        shape.erase(g2, allShapes);
+        shape.undo(g2, allShapes);
     }
     
 }

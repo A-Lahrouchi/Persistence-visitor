@@ -181,9 +181,11 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
         button.setActionCommand("Undo");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt){
-                SimpleShape undoShape = shapesList.get(shapesList.size()-1);
-                invoker.setCommand(new UndoCommand((Graphics2D)panel.getGraphics(), undoShape,shapesList));
-                invoker.executeCommand();
+                if (shapesList.size()>0) {
+                    SimpleShape undoShape = shapesList.get(shapesList.size()-1);
+                    invoker.setCommand(new UndoCommand((Graphics2D)panel.getGraphics(), undoShape,shapesList));
+                    invoker.executeCommand();                    
+                }
             }
         });
         toolbar.add(button);
