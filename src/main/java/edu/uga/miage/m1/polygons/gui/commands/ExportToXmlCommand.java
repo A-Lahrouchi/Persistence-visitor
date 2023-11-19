@@ -14,8 +14,19 @@ public class ExportToXmlCommand implements Command {
         this.xmlShapes = xmlShapes;
     }
 
+    @Override
     public void execute(){
         exporter.writeShapes(xmlShapes);
+    }
+
+    @Override
+    public void undo() {
+        // Undoing an export is not applicable in this example
+    }
+
+    @Override
+    public boolean isUndoable() {
+        return false; // Export is not undoable
     }
 
 }

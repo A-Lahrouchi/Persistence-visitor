@@ -7,15 +7,15 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class JsonShapes implements ListOfShapes {
 
     @JsonProperty("shapes")
-    private ArrayList<JsonNode> shapeList;
+    private LinkedList<JsonNode> shapeList;
 
     public JsonShapes() {
-        this.shapeList = new ArrayList<>();
+        this.shapeList = new LinkedList<>();
     }
 
     public List<JsonNode> getShapeList() {
@@ -27,10 +27,23 @@ public class JsonShapes implements ListOfShapes {
         JsonNode shapeNode;
         try {
             shapeNode = objectMapper.readTree(shape);
-            shapeList.add(shapeNode);
+            shapeList.push(shapeNode);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String popFromShapeList(){
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode shapeNode;
+        String shapeAsString = null;
+        try {
+            shapeNode = shapeList.pop();
+            shapeAsString = objectMapper.writeValueAsString(shapeNode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return shapeAsString;
     }
 
 }

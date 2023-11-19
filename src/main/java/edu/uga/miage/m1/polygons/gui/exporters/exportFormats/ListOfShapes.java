@@ -4,4 +4,6 @@ public interface ListOfShapes {
 
     public void pushToShapeList(String shape);
 
+    public String popFromShapeList();
+
 }

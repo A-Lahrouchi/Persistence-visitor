@@ -14,7 +14,18 @@ public class ExportToJsonCommand implements Command{
         this.jsonShapes = jsonShapes;
     }
 
+    @Override
     public void execute(){
         exporter.writeShapes(jsonShapes);
+    }
+
+    @Override
+    public void undo() {
+        // Undoing an export is not applicable in this example
+    }
+
+    @Override
+    public boolean isUndoable() {
+        return false; // Export is not undoable
     }
 }

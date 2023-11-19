@@ -1,7 +1,7 @@
 package edu.uga.miage.m1.polygons.gui.exporters.exportFormats;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,10 +15,10 @@ public class XmlShapes implements ListOfShapes {
 
     @JacksonXmlElementWrapper(localName = "shapes")
     @JacksonXmlProperty(localName = "shape")
-    private ArrayList<JsonNode> shapeList;
+    private LinkedList<JsonNode> shapeList;
 
     public XmlShapes() {
-        this.shapeList = new ArrayList<>();
+        this.shapeList = new LinkedList<>();
     }
     
     public List<JsonNode> getShapeList() {
@@ -34,6 +34,19 @@ public class XmlShapes implements ListOfShapes {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String popFromShapeList(){
+        XmlMapper xmlMapper = new XmlMapper();
+        JsonNode shapeNode;
+        String shapeAsString = null;
+        try {
+            shapeNode = shapeList.pop();
+            shapeAsString = xmlMapper.writeValueAsString(shapeNode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return shapeAsString;
     }
 
 }

@@ -3,7 +3,6 @@ package edu.uga.miage.m1.polygons.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -21,16 +20,12 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 
-import edu.uga.miage.m1.polygons.gui.commands.CommandInvoker;
+import edu.uga.miage.m1.polygons.gui.commands.DrawShapesCommand;
+import edu.uga.miage.m1.polygons.gui.commands.CommandManager;
 import edu.uga.miage.m1.polygons.gui.commands.ExportToJsonCommand;
 import edu.uga.miage.m1.polygons.gui.commands.ExportToXmlCommand;
 import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.JsonShapes;
 import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.XmlShapes;
-import edu.uga.miage.m1.polygons.gui.persistence.JSonVisitor;
-import edu.uga.miage.m1.polygons.gui.persistence.XMLVisitor;
-import edu.uga.miage.m1.polygons.gui.shapes.Circle;
-import edu.uga.miage.m1.polygons.gui.shapes.Square;
-import edu.uga.miage.m1.polygons.gui.shapes.Triangle;
 
 /**
  * This class represents the main application class, which is a JFrame subclass
@@ -45,8 +40,8 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
         SQUARE, TRIANGLE, CIRCLE
     }
 
-    private enum Exports {
-        JSON, XML
+    private enum Commands {
+        JSON, XML, UNDO
     }
 
     private static final long serialVersionUID = 1L;
@@ -55,7 +50,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
     private Shapes selectedShape;
 
-    private Exports selectedExport;
+    private Commands selectedCommands;
 
     private JPanel panel;
 
@@ -63,7 +58,7 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
     private ActionListener reusableActionListener = new ShapeActionListener();
 
-    private ActionListener exportActionListener = new ExportActionListener();
+    private ActionListener commandActionListener = new CommandActionListener();
 
     /**
      * Tracks buttons to manage the background.
@@ -73,13 +68,11 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     /**
      * Tracks buttons to manage the exports.
      */
-    private Map<Exports, JButton> exportButtons = new HashMap<>();
+    private Map<Commands, JButton> commandButtons = new HashMap<>();
 
-    private JSonVisitor jsonVisitor;
-    private XMLVisitor xmlVisitor;
     private JsonShapes jsonShapes;
     private XmlShapes xmlShapes;
-    private CommandInvoker invoker;
+    private CommandManager commandManager;
 
     /**
      * Default constructor that populates the main window.
@@ -89,11 +82,9 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     public JDrawingFrame(String frameName) {
         super(frameName);
 
-        jsonVisitor = JSonVisitor.getInstance();
-        xmlVisitor = XMLVisitor.getInstance();
         jsonShapes = new JsonShapes();
         xmlShapes = new XmlShapes();
-        invoker = CommandInvoker.getInstance();
+        commandManager = CommandManager.getInstance();
 
         // Instantiates components
         toolbar = new JToolBar("Toolbar");
@@ -118,8 +109,9 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
 
         // Add export buttons on the right side of the menu
         toolbar.add(Box.createHorizontalGlue());
-        addExport(Exports.JSON, "JSON");
-        addExport(Exports.XML, "XML");
+        addCommand(Commands.JSON, "JSON");
+        addCommand(Commands.XML, "XML");
+        addCommand(Commands.UNDO, "UNDO");
 
         setPreferredSize(new Dimension(400, 400));
     }
@@ -147,17 +139,17 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     /**
      * Add export buttons to the toolbar
      * 
-     * @param export      The type of export (JSON ou XML)
+     * @param cmd         The type of export (JSON ou XML)
      * @param buttonLabel The label associated to the button
      */
-    private void addExport(Exports export, String buttonLabel) {
+    private void addCommand(Commands cmd, String buttonLabel) {
         JButton button = new JButton(buttonLabel);
         button.setBorderPainted(false);
-        exportButtons.put(export, button);
-        button.setActionCommand(export.toString());
-        button.addActionListener(exportActionListener);
+        commandButtons.put(cmd, button);
+        button.setActionCommand(cmd.toString());
+        button.addActionListener(commandActionListener);
 
-        if (selectedExport == null) {
+        if (selectedCommands == null) {
             button.doClick();
         }
         toolbar.add(button);
@@ -173,26 +165,33 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
      */
     public void mouseClicked(MouseEvent evt) {
         if (panel.contains(evt.getX(), evt.getY())) {
-            Graphics2D g2 = (Graphics2D) panel.getGraphics();
             switch (selectedShape) {
                 case CIRCLE:
-                    Circle c = new Circle(evt.getX(), evt.getY());
-                    c.draw(g2);
-                    jsonShapes.pushToShapeList(c.accept(jsonVisitor));
-                    xmlShapes.pushToShapeList(c.accept(xmlVisitor));
-                    break;
-                case TRIANGLE:
-                    new Triangle(evt.getX(), evt.getY()).draw(g2);
-                    Triangle t = new Triangle(evt.getX(), evt.getY());
-                    t.draw(g2);
-                    jsonShapes.pushToShapeList(t.accept(jsonVisitor));
-                    xmlShapes.pushToShapeList(t.accept(xmlVisitor));
+                    commandManager.executeCommand(new DrawShapesCommand(
+                            panel,
+                            "circle",
+                            evt.getX(),
+                            evt.getY(),
+                            jsonShapes,
+                            xmlShapes));
                     break;
                 case SQUARE:
-                    Square s = new Square(evt.getX(), evt.getY());
-                    s.draw(g2);
-                    jsonShapes.pushToShapeList(s.accept(jsonVisitor));
-                    xmlShapes.pushToShapeList(s.accept(xmlVisitor));
+                    commandManager.executeCommand(new DrawShapesCommand(
+                            panel,
+                            "square",
+                            evt.getX(),
+                            evt.getY(),
+                            jsonShapes,
+                            xmlShapes));
+                    break;
+                case TRIANGLE:
+                    commandManager.executeCommand(new DrawShapesCommand(
+                            panel,
+                            "triangle",
+                            evt.getX(),
+                            evt.getY(),
+                            jsonShapes,
+                            xmlShapes));
                     break;
                 default:
                     System.out.println("No shape named " + selectedShape);
@@ -287,28 +286,30 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
      * Simple action listener for export tool bar buttons that export
      * the shape list to JSON and XML file when receiving an action event.
      */
-    private class ExportActionListener implements ActionListener {
+    private class CommandActionListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
             // Itere sur tous les boutons
-            Iterator<Exports> keys = exportButtons.keySet().iterator();
+            Iterator<Commands> keys = commandButtons.keySet().iterator();
             while (keys.hasNext()) {
-                Exports exportType = keys.next();
-                JButton btn = exportButtons.get(exportType);
-                if (evt.getActionCommand().equals(exportType.toString())){
-                    selectedExport = exportType;
-                    switch (selectedExport) {
+                Commands commandType = keys.next();
+                JButton btn = commandButtons.get(commandType);
+                if (evt.getActionCommand().equals(commandType.toString())) {
+                    selectedCommands = commandType;
+                    switch (selectedCommands) {
                         case JSON:
-                            invoker.setCommand(new ExportToJsonCommand(jsonShapes));
-                            invoker.executeCommand();
+                            commandManager.executeCommand(new ExportToJsonCommand(jsonShapes));
                             break;
 
                         case XML:
-                            invoker.setCommand(new ExportToXmlCommand(xmlShapes));
-                            invoker.executeCommand();
+                            commandManager.executeCommand(new ExportToXmlCommand(xmlShapes));
+                            break;
+
+                        case UNDO:
+                            commandManager.undoCommand();
                             break;
 
                         default:
-                            System.out.println("No Export type selected" + selectedExport);
+                            System.out.println("No Export type selected" + selectedCommands);
                     }
                 }
                 btn.repaint();
