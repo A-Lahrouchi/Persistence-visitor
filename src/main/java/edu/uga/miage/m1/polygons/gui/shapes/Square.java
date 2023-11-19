@@ -23,7 +23,10 @@ import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+
 import edu.uga.miage.m1.polygons.gui.persistence.Visitable;
 import edu.uga.miage.m1.polygons.gui.persistence.Visitor;
 
@@ -62,6 +65,65 @@ public class Square implements SimpleShape, Visitable {
         g2.draw(new Rectangle2D.Double(x, y, 50, 50));
     }
 
+    public void drawEmptySquare(Graphics2D g2){
+        g2.setColor(Color.WHITE);
+        g2.fill(new Rectangle2D.Double(x, y, 50, 50));
+        g2.setColor(Color.WHITE);
+        g2.draw(new Rectangle2D.Double(x, y, 50, 50));
+    }
+
+    public void highlight(Graphics2D g2, Boolean highlight){
+        if (highlight){
+            g2.setColor(Color.YELLOW);
+        }else{
+            g2.setColor(Color.BLACK);
+        }
+        g2.draw(new Rectangle2D.Double(x, y, 50, 50));
+    }
+
+    public Area getArea(){
+        return new Area(new Rectangle2D.Double(x, y, 50, 50));
+    }
+
+    public Boolean overlaps(SimpleShape shape){
+        Area theArea = getArea();
+        theArea.intersect(shape.getArea());
+        return !theArea.isEmpty();
+    }
+
+    public ArrayList<SimpleShape> overlapingShapes ( ArrayList<SimpleShape> allShapes){
+        ArrayList<SimpleShape> overlapingShapes = new ArrayList<>();
+
+        for (SimpleShape shape : allShapes){
+            if (overlaps(shape))
+                overlapingShapes.add(shape);
+        }
+
+        return overlapingShapes;
+    }
+
+    public void erase(Graphics2D g2, ArrayList<SimpleShape> allShapes ){
+
+        allShapes.remove(this);
+
+        ArrayList<SimpleShape> overlapingShapes = overlapingShapes(allShapes);
+
+        drawEmptySquare(g2);
+
+        for (SimpleShape shape : overlapingShapes){
+            shape.draw(g2);
+        }
+
+    }
+
+    public void move (Graphics2D g2,  ArrayList<SimpleShape> allShapes, int x, int y){
+        erase(g2, allShapes);
+        this.setX(x);
+        this.setY(y);
+        draw(g2);
+        allShapes.add(this);
+    }
+
     @Override
     public String accept(Visitor visitor) {
         return visitor.visit(this);
@@ -75,5 +137,13 @@ public class Square implements SimpleShape, Visitable {
     @Override
     public int getY() {
         return y;
+    }
+
+    private void setX(int x){
+        this.x=x-25;
+    }
+
+    private void setY(int y){
+        this.y=y-25;
     }
 }

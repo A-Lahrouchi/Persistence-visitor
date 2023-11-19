@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,13 +25,16 @@ import javax.swing.JToolBar;
 import edu.uga.miage.m1.polygons.gui.commands.CommandInvoker;
 import edu.uga.miage.m1.polygons.gui.commands.ExportToJsonCommand;
 import edu.uga.miage.m1.polygons.gui.commands.ExportToXmlCommand;
+import edu.uga.miage.m1.polygons.gui.commands.UndoCommand;
 import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.JsonShapes;
 import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.XmlShapes;
 import edu.uga.miage.m1.polygons.gui.persistence.JSonVisitor;
 import edu.uga.miage.m1.polygons.gui.persistence.XMLVisitor;
 import edu.uga.miage.m1.polygons.gui.shapes.Circle;
+import edu.uga.miage.m1.polygons.gui.shapes.SimpleShape;
 import edu.uga.miage.m1.polygons.gui.shapes.Square;
 import edu.uga.miage.m1.polygons.gui.shapes.Triangle;
+import edu.uga.miage.m1.polygons.gui.shapes.ShapeSelector;
 
 /**
  * This class represents the main application class, which is a JFrame subclass
@@ -75,11 +79,15 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
      */
     private Map<Exports, JButton> exportButtons = new HashMap<>();
 
+    private ArrayList<SimpleShape> shapesList = new ArrayList<>();
+
     private JSonVisitor jsonVisitor;
     private XMLVisitor xmlVisitor;
     private JsonShapes jsonShapes;
     private XmlShapes xmlShapes;
     private CommandInvoker invoker;
+    private ShapeSelector shapeSelector;
+    private SimpleShape shapeObjectSelected;
 
     /**
      * Default constructor that populates the main window.
@@ -120,6 +128,8 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
         toolbar.add(Box.createHorizontalGlue());
         addExport(Exports.JSON, "JSON");
         addExport(Exports.XML, "XML");
+
+        addUndoBtn();
 
         setPreferredSize(new Dimension(400, 400));
     }
@@ -165,6 +175,22 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
         repaint();
     }
 
+    private void addUndoBtn(){
+        JButton button= new JButton("Undo");
+        button.setBorderPainted(false);
+        button.setActionCommand("Undo");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt){
+                SimpleShape undoShape = shapesList.get(shapesList.size()-1);
+                invoker.setCommand(new UndoCommand((Graphics2D)panel.getGraphics(), undoShape,shapesList));
+                invoker.executeCommand();
+            }
+        });
+        toolbar.add(button);
+        toolbar.validate();
+        repaint();
+    }
+
     /**
      * Implements method for the <tt>MouseListener</tt> interface to
      * draw the selected shape into the drawing canvas.
@@ -174,28 +200,46 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
     public void mouseClicked(MouseEvent evt) {
         if (panel.contains(evt.getX(), evt.getY())) {
             Graphics2D g2 = (Graphics2D) panel.getGraphics();
-            switch (selectedShape) {
-                case CIRCLE:
-                    Circle c = new Circle(evt.getX(), evt.getY());
-                    c.draw(g2);
-                    jsonShapes.pushToShapeList(c.accept(jsonVisitor));
-                    xmlShapes.pushToShapeList(c.accept(xmlVisitor));
-                    break;
-                case TRIANGLE:
-                    new Triangle(evt.getX(), evt.getY()).draw(g2);
-                    Triangle t = new Triangle(evt.getX(), evt.getY());
-                    t.draw(g2);
-                    jsonShapes.pushToShapeList(t.accept(jsonVisitor));
-                    xmlShapes.pushToShapeList(t.accept(xmlVisitor));
-                    break;
-                case SQUARE:
-                    Square s = new Square(evt.getX(), evt.getY());
-                    s.draw(g2);
-                    jsonShapes.pushToShapeList(s.accept(jsonVisitor));
-                    xmlShapes.pushToShapeList(s.accept(xmlVisitor));
-                    break;
-                default:
-                    System.out.println("No shape named " + selectedShape);
+            
+            shapeSelector=new ShapeSelector(shapesList);
+            SimpleShape newShapeObjectSelected = shapeSelector.selectedShape(evt.getX(), evt.getY());
+
+            if (selectedShape != null){
+                switch (selectedShape) {
+                    case CIRCLE:
+                        Circle c = new Circle(evt.getX(), evt.getY());
+                        c.draw(g2);
+                        jsonShapes.pushToShapeList(c.accept(jsonVisitor));
+                        xmlShapes.pushToShapeList(c.accept(xmlVisitor));
+                        shapesList.add(c);
+                        break;
+                    case TRIANGLE:
+                        Triangle t = new Triangle(evt.getX(), evt.getY());
+                        t.draw(g2);
+                        jsonShapes.pushToShapeList(t.accept(jsonVisitor));
+                        xmlShapes.pushToShapeList(t.accept(xmlVisitor));
+                        shapesList.add(t);
+                        break;
+                    case SQUARE:
+                        Square s = new Square(evt.getX(), evt.getY());
+                        s.draw(g2);
+                        jsonShapes.pushToShapeList(s.accept(jsonVisitor));
+                        xmlShapes.pushToShapeList(s.accept(xmlVisitor));
+                        shapesList.add(s);
+                        break;
+                    default:
+                        System.out.println("No shape named " + selectedShape);
+                }
+            }else if(newShapeObjectSelected != null){
+                if(shapeObjectSelected != null){
+                    shapeObjectSelected.highlight(g2,false);
+                }
+                newShapeObjectSelected.highlight(g2,true);
+                shapeObjectSelected=newShapeObjectSelected;
+            }else{
+                shapeObjectSelected.move(g2,shapesList, evt.getX(), evt.getY());
+                shapeObjectSelected.highlight(g2, false);
+                shapeObjectSelected=null;
             }
         }
     }
@@ -272,7 +316,11 @@ public class JDrawingFrame extends JFrame implements MouseListener, MouseMotionL
             while (keys.hasNext()) {
                 Shapes shape = keys.next();
                 JButton btn = shapeButtons.get(shape);
-                if (evt.getActionCommand().equals(shape.toString())) {
+                if(evt.getActionCommand().equals(shape.toString()) & (selectedShape==shape)) {
+                    btn.setBorderPainted(false);
+                    selectedShape = null;
+                }
+                else if (evt.getActionCommand().equals(shape.toString())){
                     btn.setBorderPainted(true);
                     selectedShape = shape;
                 } else {
