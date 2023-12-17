@@ -10,7 +10,7 @@ import javax.swing.JFrame;
 public class GUIHelper {
 
     public static void showOnFrame(String frameName) {
-        JFrame frame = new JDrawingFrame(frameName);
+        JFrame frame = new MainFrame(frameName);
         WindowAdapter wa = new WindowAdapter() {
 
             public void windowClosing(WindowEvent e) {

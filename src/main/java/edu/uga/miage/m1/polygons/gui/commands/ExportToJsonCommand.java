@@ -1,8 +1,8 @@
 package edu.uga.miage.m1.polygons.gui.commands;
 
-import edu.uga.miage.m1.polygons.gui.exporters.Exporter;
-import edu.uga.miage.m1.polygons.gui.exporters.JsonExporter;
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.JsonShapes;
+import edu.uga.miage.m1.polygons.gui.io.Exporter;
+import edu.uga.miage.m1.polygons.gui.io.JsonExporter;
+import edu.uga.miage.m1.polygons.gui.listofshapes.JsonShapes;
 
 public class ExportToJsonCommand implements Command{
 

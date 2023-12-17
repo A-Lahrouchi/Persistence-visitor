@@ -1,4 +1,4 @@
-package edu.uga.miage.m1.polygons.gui.exporters;
+package edu.uga.miage.m1.polygons.gui.io;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.io.IOException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.ListOfShapes;
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.XmlShapes;
+import edu.uga.miage.m1.polygons.gui.listofshapes.ListOfShapes;
+import edu.uga.miage.m1.polygons.gui.listofshapes.XmlShapes;
 
 public class XmlExporter implements Exporter {
 
@@ -41,16 +41,6 @@ public class XmlExporter implements Exporter {
             e.printStackTrace();
         }
         return xmlShapesAString;
-    }
-
-    public ListOfShapes readShapes() {
-        XmlShapes xmlShapes = null;
-        try {
-            xmlShapes = xmlMapper.readValue(new File(fileName), XmlShapes.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return xmlShapes;
     }
 
     public void writeShapes(ListOfShapes xmlShapes) {

@@ -6,8 +6,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.JsonShapes;
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.XmlShapes;
+import edu.uga.miage.m1.polygons.gui.listofshapes.JsonShapes;
+import edu.uga.miage.m1.polygons.gui.listofshapes.XmlShapes;
 import edu.uga.miage.m1.polygons.gui.persistence.JSonVisitor;
 import edu.uga.miage.m1.polygons.gui.persistence.XMLVisitor;
 import edu.uga.miage.m1.polygons.gui.shapes.Circle;

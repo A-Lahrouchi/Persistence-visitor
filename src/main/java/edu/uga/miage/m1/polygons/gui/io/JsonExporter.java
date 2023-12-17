@@ -1,4 +1,4 @@
-package edu.uga.miage.m1.polygons.gui.exporters;
+package edu.uga.miage.m1.polygons.gui.io;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,8 +6,8 @@ import java.io.IOException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.JsonShapes;
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.ListOfShapes;
+import edu.uga.miage.m1.polygons.gui.listofshapes.JsonShapes;
+import edu.uga.miage.m1.polygons.gui.listofshapes.ListOfShapes;
 
 public class JsonExporter implements Exporter {
 
@@ -40,18 +40,6 @@ public class JsonExporter implements Exporter {
             e.printStackTrace();
         }
         return jsonShapesAString;
-    }
-
-    public JsonShapes readShapes() {
-        JsonShapes jsonShapes = null;
-        JsonNode jsonNode = null;
-        try {
-            jsonNode = objectMapper.readTree(new File(fileName));
-            jsonShapes = objectMapper.treeToValue(jsonNode, JsonShapes.class);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return jsonShapes;
     }
 
     public void writeShapes(ListOfShapes jsonShapes) {

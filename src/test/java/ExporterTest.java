@@ -2,12 +2,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import edu.uga.miage.m1.polygons.gui.exporters.Exporter;
-import edu.uga.miage.m1.polygons.gui.exporters.JsonExporter;
-import edu.uga.miage.m1.polygons.gui.exporters.XmlExporter;
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.JsonShapes;
-import edu.uga.miage.m1.polygons.gui.exporters.exportFormats.XmlShapes;
 import edu.uga.miage.m1.polygons.gui.persistence.Visitor;
+import edu.uga.miage.m1.polygons.gui.io.Exporter;
+import edu.uga.miage.m1.polygons.gui.io.Importer;
+import edu.uga.miage.m1.polygons.gui.io.JsonExporter;
+import edu.uga.miage.m1.polygons.gui.io.JsonImporter;
+import edu.uga.miage.m1.polygons.gui.io.XmlExporter;
+import edu.uga.miage.m1.polygons.gui.io.XmlImporter;
+import edu.uga.miage.m1.polygons.gui.listofshapes.JsonShapes;
+import edu.uga.miage.m1.polygons.gui.listofshapes.XmlShapes;
 import edu.uga.miage.m1.polygons.gui.persistence.JSonVisitor;
 import edu.uga.miage.m1.polygons.gui.persistence.XMLVisitor;
 import edu.uga.miage.m1.polygons.gui.shapes.Circle;
@@ -16,8 +19,9 @@ class ExporterTest {
 
     @Test
     void testReadEmptyJsonShapes() {
+        Importer importer = JsonImporter.getInstance();
         Exporter exporter = JsonExporter.getInstance();
-        JsonShapes jsonShapes = (JsonShapes) exporter.readShapes();
+        JsonShapes jsonShapes = (JsonShapes) importer.readShapes();
 
         exporter.writeShapes(jsonShapes);
         String jsonShapesAsString = exporter.getShapesAsString(jsonShapes);
@@ -27,8 +31,9 @@ class ExporterTest {
 
     @Test
     void testReadEmptyXmlShapes() {
+        Importer importer = XmlImporter.getInstance();
         Exporter exporter = XmlExporter.getInstance();
-        XmlShapes xmlShapes = (XmlShapes) exporter.readShapes();
+        XmlShapes xmlShapes = (XmlShapes) importer.readShapes();
 
         exporter.writeShapes(xmlShapes);
         String xmlShapesAsString = exporter.getShapesAsString(xmlShapes);
@@ -38,6 +43,7 @@ class ExporterTest {
 
     @Test
     void testReadJsonShapes() {
+        Importer importer = JsonImporter.getInstance();
         Exporter exporter = JsonExporter.getInstance();
         JsonShapes jsonShapes = new JsonShapes();
         Circle circle = new Circle(25, 25);
@@ -46,7 +52,7 @@ class ExporterTest {
         jsonShapes.pushToShapeList(circle.accept(visitor));
         exporter.writeShapes(jsonShapes);
 
-        jsonShapes = (JsonShapes) exporter.readShapes();
+        jsonShapes = (JsonShapes) importer.readShapes();
         String jsonShapesAsString = exporter.getShapesAsString(jsonShapes);
 
         assertEquals("{\"shapes\":[{\"type\":\"circle\",\"x\":0,\"y\":0}]}", jsonShapesAsString);
@@ -54,6 +60,7 @@ class ExporterTest {
 
     @Test
     void testReadXmlShapes() {
+        Importer importer = XmlImporter.getInstance();
         Exporter exporter = XmlExporter.getInstance();
         XmlShapes xmlShapes = new XmlShapes();
         Circle circle = new Circle(25, 25);
@@ -62,7 +69,7 @@ class ExporterTest {
         xmlShapes.pushToShapeList(circle.accept(visitor));
         exporter.writeShapes(xmlShapes);
 
-        xmlShapes = (XmlShapes) exporter.readShapes();
+        xmlShapes = (XmlShapes) importer.readShapes();
         String xmlShapesAsString = exporter.getShapesAsString(xmlShapes);
 
         assertEquals(
