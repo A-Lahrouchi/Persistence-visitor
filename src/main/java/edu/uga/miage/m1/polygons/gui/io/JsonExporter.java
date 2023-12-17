@@ -3,21 +3,20 @@ package edu.uga.miage.m1.polygons.gui.io;
 import java.io.File;
 import java.io.IOException;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import javax.swing.JFileChooser;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.uga.miage.m1.polygons.gui.listofshapes.JsonShapes;
 import edu.uga.miage.m1.polygons.gui.listofshapes.ListOfShapes;
 
 public class JsonExporter implements Exporter {
 
     private static JsonExporter singletonJsonExporter;
 
-    private String fileName;
+    private String fileName = "./exports/export.json";
     private ObjectMapper objectMapper;
 
     private JsonExporter() {
-        this.fileName = "./exports/export.json";
         this.objectMapper = new ObjectMapper();
     }
 

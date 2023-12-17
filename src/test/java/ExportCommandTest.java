@@ -35,21 +35,6 @@ class ExportCommandTest {
     }
 
     @Test
-    void testExportEmptyXmlShapes() {
-        CommandManager commandManager = CommandManager.getInstance();
-        Importer importer = XmlImporter.getInstance();
-        Exporter exporter = XmlExporter.getInstance();
-        XmlShapes xmlShapes;
-        String xmlShapesAsString;
-
-        commandManager.executeCommand(new ExportToXmlCommand(new XmlShapes()));
-        xmlShapes = (XmlShapes) importer.readShapes();
-        xmlShapesAsString = exporter.getShapesAsString(xmlShapes);
-
-        assertEquals("<?xml version='1.0' encoding='UTF-8'?><root><shapes/></root>", xmlShapesAsString);
-    }
-
-    @Test
     void testExportJsonShapes() {
         CommandManager commandManager = CommandManager.getInstance();
         Importer importer = JsonImporter.getInstance();
@@ -65,6 +50,21 @@ class ExportCommandTest {
         jsonShapesAsString = exporter.getShapesAsString(jsonShapesResult);
 
         assertEquals("{\"shapes\":[{\"type\":\"circle\",\"x\":0,\"y\":0}]}", jsonShapesAsString);
+    }
+
+    @Test
+    void testExportEmptyXmlShapes() {
+        CommandManager commandManager = CommandManager.getInstance();
+        Importer importer = XmlImporter.getInstance();
+        Exporter exporter = XmlExporter.getInstance();
+        XmlShapes xmlShapes;
+        String xmlShapesAsString;
+
+        commandManager.executeCommand(new ExportToXmlCommand(new XmlShapes()));
+        xmlShapes = (XmlShapes) importer.readShapes();
+        xmlShapesAsString = exporter.getShapesAsString(xmlShapes);
+
+        assertEquals("<?xml version='1.0' encoding='UTF-8'?><root><shapes/></root>", xmlShapesAsString);
     }
 
     @Test

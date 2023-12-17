@@ -3,6 +3,8 @@ package edu.uga.miage.m1.polygons.gui.io;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JFileChooser;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,7 +19,6 @@ public class JsonImporter implements Importer {
     private ObjectMapper objectMapper;
 
     private JsonImporter() {
-        this.fileName = "./exports/export.json";
         this.objectMapper = new ObjectMapper();
     }
 

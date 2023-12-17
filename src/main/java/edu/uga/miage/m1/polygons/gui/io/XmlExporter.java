@@ -3,11 +3,12 @@ package edu.uga.miage.m1.polygons.gui.io;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JFileChooser;
+
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 
 import edu.uga.miage.m1.polygons.gui.listofshapes.ListOfShapes;
-import edu.uga.miage.m1.polygons.gui.listofshapes.XmlShapes;
 
 public class XmlExporter implements Exporter {
 
@@ -17,7 +18,6 @@ public class XmlExporter implements Exporter {
     private XmlMapper xmlMapper;
 
     private XmlExporter() {
-        this.fileName = "./exports/export.xml";
         this.xmlMapper = new XmlMapper();
         xmlMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true);
     }

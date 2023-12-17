@@ -6,6 +6,7 @@ import java.util.Map;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 
 import javax.swing.*;
 
@@ -13,6 +14,12 @@ import edu.uga.miage.m1.polygons.gui.commands.DrawShapesCommand;
 import edu.uga.miage.m1.polygons.gui.commands.CommandManager;
 import edu.uga.miage.m1.polygons.gui.commands.ExportToJsonCommand;
 import edu.uga.miage.m1.polygons.gui.commands.ExportToXmlCommand;
+import edu.uga.miage.m1.polygons.gui.commands.ImportFromJsonCommand;
+import edu.uga.miage.m1.polygons.gui.commands.ImportFromXmlCommand;
+import edu.uga.miage.m1.polygons.gui.io.JsonExporter;
+import edu.uga.miage.m1.polygons.gui.io.JsonImporter;
+import edu.uga.miage.m1.polygons.gui.io.XmlExporter;
+import edu.uga.miage.m1.polygons.gui.io.XmlImporter;
 import edu.uga.miage.m1.polygons.gui.listofshapes.JsonShapes;
 import edu.uga.miage.m1.polygons.gui.listofshapes.XmlShapes;
 
@@ -57,6 +64,13 @@ public class MainFrame extends JFrame implements MouseListener, MouseMotionListe
     private XmlShapes xmlShapes;
     private CommandManager commandManager;
 
+    JFileChooser fileChooser;
+
+    private JsonImporter jsonImporter;
+    private JsonExporter jsonExporter;
+    private XmlImporter xmlImporter;
+    private XmlExporter xmlExporter;
+
     /**
      * Default constructor that populates the main window.
      * 
@@ -64,6 +78,15 @@ public class MainFrame extends JFrame implements MouseListener, MouseMotionListe
      */
     public MainFrame(String frameName) {
         super(frameName);
+
+        fileChooser = new JFileChooser();
+        fileChooser.setCurrentDirectory(new File("."));
+
+        jsonImporter = JsonImporter.getInstance();
+        jsonExporter = JsonExporter.getInstance();
+        xmlImporter = XmlImporter.getInstance();
+        xmlExporter = XmlExporter.getInstance();
+
 
         jsonShapes = new JsonShapes();
         xmlShapes = new XmlShapes();
@@ -106,7 +129,7 @@ public class MainFrame extends JFrame implements MouseListener, MouseMotionListe
         toolbar = new JToolBar("Toolbar");
         toolbar.setLayout(new FlowLayout());
         toolbar.setBackground(Color.lightGray);
-        toolbar.setPreferredSize(new Dimension(100, toolbar.getHeight()));
+        toolbar.setPreferredSize(new Dimension(160, toolbar.getHeight()));
 
         drawingPanel = new JPanel();
         drawingPanel.setBackground(Color.WHITE);
@@ -139,6 +162,7 @@ public class MainFrame extends JFrame implements MouseListener, MouseMotionListe
     private void addTool(Tools tool, ImageIcon icon) {
         JButton button = new JButton(icon);
         button.setBorderPainted(false);
+        button.setFocusable(false);
         toolButtons.put(tool, button);
         button.setActionCommand(tool.toString());
         button.addActionListener(toolActionListener);
@@ -278,11 +302,46 @@ public class MainFrame extends JFrame implements MouseListener, MouseMotionListe
     private class MenuActionListener implements ActionListener {
 
         public void actionPerformed(ActionEvent evt) {
+            int response = 1;
+            String fn = null;
+
+            if (evt.getSource() == importJsonItem) {
+                response = fileChooser.showOpenDialog(null);
+                if (response == JFileChooser.APPROVE_OPTION) {
+                    fn = fileChooser.getSelectedFile().getAbsolutePath();
+                    jsonImporter.setFileName(fn);
+                }
+                ImportFromJsonCommand cmd = new ImportFromJsonCommand(drawingPanel, jsonShapes);
+                commandManager.executeCommand(cmd);
+                jsonShapes = cmd.getShapes();
+            }
+
+            if (evt.getSource() == importXmlItem) {
+                response = fileChooser.showOpenDialog(null);
+                if (response == JFileChooser.APPROVE_OPTION) {
+                    fn = fileChooser.getSelectedFile().getAbsolutePath();
+                    xmlImporter.setFileName(fn);
+                }
+                ImportFromXmlCommand cmd = new ImportFromXmlCommand(drawingPanel, xmlShapes);
+                commandManager.executeCommand(cmd);
+                xmlShapes = cmd.getShapes();
+            }
+
             if (evt.getSource() == exportJsonItem) {
+                response = fileChooser.showSaveDialog(null);
+                if (response == JFileChooser.APPROVE_OPTION) {
+                    fn = fileChooser.getSelectedFile().getAbsolutePath();
+                    jsonExporter.setFileName(fn);
+                }
                 commandManager.executeCommand(new ExportToJsonCommand(jsonShapes));
             }
 
             if (evt.getSource() == exportXmlItem) {
+                response = fileChooser.showSaveDialog(null);
+                if (response == JFileChooser.APPROVE_OPTION) {
+                    fn = fileChooser.getSelectedFile().getAbsolutePath();
+                    xmlExporter.setFileName(fn);
+                }
                 commandManager.executeCommand(new ExportToXmlCommand(xmlShapes));
             }
 
